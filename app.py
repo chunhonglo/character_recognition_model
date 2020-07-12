@@ -27,7 +27,6 @@ def predict():
         image = image.sum(axis=2).astype(np.float32)
         resized = cv2.resize(image, (28,28), interpolation = cv2.INTER_AREA)
         vect = np.asarray(resized, dtype="uint8")
-        print(vect)
         vect = vect.reshape(1, 1, 1, 28*28).astype('float32')
         vect = vect[0][0]
         my_prediction = model.predict(vect)
