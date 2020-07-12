@@ -9,7 +9,7 @@ var curColor = "#FF5733";
 function drawCanvas() {
 	canvas = document.getElementById('canvas');
 	context = document.getElementById('canvas').getContext("2d");
-	context.lineWidth = 30;
+	context.lineWidth = 15;
 }
 
 
