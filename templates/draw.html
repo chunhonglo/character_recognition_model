@@ -6,7 +6,7 @@
 	<title>Character Recognition </title>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
 	    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles_draw.css') }}">
-	        <script type="text/javascript" src="{{ url_for('static', filename='draw.js') }}"></script>
+	        <script src="{{ url_for('static', filename='draw.js') }}"></script>
 
 </head>
 
@@ -16,11 +16,18 @@
 
 <body>
 	<form id ="myForm" action="{{ url_for('predict')}}" method="POST" enctype="multipart/form-data">
-	<canvas id="canvas", name="draw", width="400", height="400">
-	<script type="text/javascript">
-		$(document).ready(function() {
-			drawCanvas();
-		});
+		<canvas id="canvas", name="draw", width="400", height="400">
+	<script>
+		drawCanvas();	
+//		document.getElementById("canvas").addEventListener('mouseup', alert("up"));
+//		document.getElementById("canvas").addEventListener('mousemove', alert("move"));
+//		document.getElementById("canvas").addEventListener("mousedown", alert("Clicked!"));
+		var elem = document.getElementById('canvas');
+//		elem.onclick = function() { alert("hello ");};
+//		elem.addEventListener('mousedown', function() {alert("hello!")})
+		elem.addEventListener('mousedown', mouseDownEventHandler);
+		elem.addEventListener('mouseup', mouseUpEventHandler);
+		elem.addEventListener('mousemove', mouseMoveEventHandler);
 	</script>
 	</canvas>
 	<input type="hidden" id = 'url' name = "url" value = "">
