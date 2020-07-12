@@ -1,57 +1,38 @@
-from flask import Flask, request, jsonify
-app = Flask(__name__)
+import numpy as np
+import pickle
+#import matplotlib.pyplot as plt
+import cv2
+import base64
+from flask import Flask, request, jsonify, render_template
+app = Flask(__name__, template_folder='templates')
+model = pickle.load(open('models/logistic_regression_model.pkl', 'rb'))
 
-@app.route('/getmsg/', methods=['GET'])
-def respond():
-    #Retrieve the name from url parameter
-    name = request.args.get("name", None)
+init_Base64 = 21;
 
-    #For debugging
-    print(f"got name {name}")
-
-    response = {}
-
-    #Check if user sent a name at all
-    if not name:
-        response["ERROR"] = "no name found, please send a name."
-
-    #Check if the user entered a number not a name
-    elif str(name).isdigit():
-        response["ERROR"] = "name can't be numeric."
-
-    # Now the user entered a valid name
-
-    else:
-        response["MESSAGE"] = f"Welcome {name} to our awesome platform!!"
-
-    # Return the response in json format
-
-    return jsonify(response)
-
-@app.route('/post/', methods=['POST'])
-def post_something():
-    param = request.form.get('name')
-    print(param)
-    # You can add the test cases you made in the previous function, but inour case here you are just testing the POST functionality
-
-    if param:
-        return jsonify({ "Message": f"Welcome {name} to our awesome platform!!", 
-            # Add this option to distinct the POST request
-
-            "METHOD" : "POST"
-            })
-    else:
-        return jsonify({
-            "ERROR": "no name found, please send a name."
-            })
-
-# A welcome message to test our server 
 @app.route('/')
-def index():
-    return "<h1>Welcome to our server !!</h1>"
+def home():
+    return render_template('draw.html')
 
-if  __name__ == '__main__':
-    app.run(threaded=True, port=5000)
+@app.route('/predict', methods=['POST'])
+def predict():
+    if request.method == 'POST':
+        draw = request.form['url']
+        draw = draw[init_Base64:]
 
+        draw_decoded = base64.b64decode(draw)
+        image = np.asarray(bytearray(draw_decoded), dtype="uint8")
+        image = cv2.imdecode(image, cv2.IMREAD_GRAYSCALE)
+        
+        resized = cv2.resize(image, (28,28), interpolation = cv2.INTER_AREA)
+        vect = np.asarray(resized, dtype="uint8")
+        vect = vect.reshape(1, 1, 28, 28).astype('float32')
+
+        my_prediction = model.predict(vect)
+        
+
+        return render_template('results.html', prediction = my_prediction)
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
