@@ -30,10 +30,7 @@ def predict():
         vect = vect.reshape(1, 1, 1, 28*28).astype('float32')
         vect = vect[0][0]
         my_prediction = model.predict(vect)
-        if my_prediction:
-            my_prediction = '5'
-        else:
-            my_prediction = 'Not a 5'
+	my_prediction = f'This digit is {my_prediction[0]}'
 
         return render_template('results.html', prediction = my_prediction)
 
