@@ -6,7 +6,7 @@ from PIL import Image
 import base64
 from flask import Flask, request, jsonify, render_template
 app = Flask(__name__, template_folder='templates')
-model = pickle.load(open('models/logistic_regression_model.pkl', 'rb'))
+model = pickle.load(open('models/logistic_regression_model.sav', 'rb'))
 
 init_Base64 = 21;
 
@@ -30,7 +30,7 @@ def predict():
         vect = vect.reshape(1, 1, 1, 28*28).astype('float32')
         vect = vect[0][0]
         my_prediction = model.predict(vect)
-	my_prediction = f'This digit is {my_prediction[0]}'
+        my_prediction = 'This digit is {}'.format(my_prediction)
 
         return render_template('results.html', prediction = my_prediction)
 

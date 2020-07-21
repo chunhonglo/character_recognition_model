@@ -1,4 +1,4 @@
-from sklearn.linear_model import SGDRegression
+from sklearn.linear_model import SGDClassifier
 from preprocessing import *
 import pickle
 
@@ -12,10 +12,10 @@ test_labels = convert_idx_to_array('../data/test_labels')
 train_img = flatten_img(train_img)
 test_img = flatten_img(test_img)
 
-sgd_clf = SGDRegression(random_seed = 10)
+sgd_clf = SGDClassifier(random_state = 10)
 sgd_clf.fit(train_img, train_labels)
 
 filename = 'logistic_regression_model.sav'
-pickle.dump(logreg, open(filename, 'wb'))
+pickle.dump(sgd_clf, open(filename, 'wb'))
 
 
