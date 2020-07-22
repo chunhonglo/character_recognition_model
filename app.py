@@ -1,12 +1,21 @@
+#import sys
+#!{sys.executable} -m pip install opencv-python
+#!{sys.executable} -m pip install Pillow
+#!{sys.executable} -m pip install Flask
+
 import numpy as np
-import pickle
+#import pickle
 #import matplotlib.pyplot as plt
 import cv2
 from PIL import Image
 import base64
 from flask import Flask, request, jsonify, render_template
 app = Flask(__name__, template_folder='templates')
-model = pickle.load(open('models/logistic_regression_model.sav', 'rb'))
+
+
+import tensorflow as tf
+from tensorflow import keras
+reconstructed_model = keras.models.load_model("models/sequential_nn_save.h5")
 
 init_Base64 = 21;
 
@@ -29,10 +38,12 @@ def predict():
         vect = np.asarray(resized, dtype="uint8")
         vect = vect.reshape(1, 1, 1, 28*28).astype('float32')
         vect = vect[0][0]
-        my_prediction = model.predict(vect)
-        my_prediction = 'This digit is {}'.format(my_prediction)
+        my_prediction = reconstructed_model.predict_classes(vect)
+        confidence_vector = np.array(reconstructed_model.predict(vect))
+        my_confidence = np.amax(confidence_vector)*100
+        my_conclusion = 'I predict this digit is {} and I am {}% confident.'.format(my_prediction, my_confidence)
 
-        return render_template('results.html', prediction = my_prediction)
+        return render_template('results.html', prediction = my_conclusion)
 
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.1', port=5000)
